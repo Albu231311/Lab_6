@@ -66,4 +66,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("androidx.compose.ui:ui:1.5.0") // Jetpack Compose UI
+    implementation ("androidx.compose.material:material:1.5.0")  // Cambiar la versión según tu configuración
+    implementation ("androidx.activity:activity-compose:1.5.0") // Soporte para Compose en actividades
+    implementation ("io.coil-kt:coil-compose:2.0.0")
+
 }
