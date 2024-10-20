@@ -1,9 +1,11 @@
 package com.uvg.lab_6
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,10 +26,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PokemonListScreen()
+            PokemonListScreen { pokemonId ->
+                // Navegar a la pantalla de detalles
+                val intent = Intent(this, PokemonDetail::class.java)
+                intent.putExtra("pokemonId", pokemonId)
+                startActivity(intent)
+            }
         }
     }
 }
+
 // Modelo para el Pokémon (simplificado)
 data class Pokemon(val name: String, val url: String)
 
@@ -51,7 +59,7 @@ object RetrofitClient {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokemonListScreen() {
+fun PokemonListScreen(onPokemonClick: (String) -> Unit) {
     val pokemonList = remember { mutableStateOf<List<Pokemon>>(emptyList()) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -79,41 +87,37 @@ fun PokemonListScreen() {
                 .padding(padding)
         ) {
             items(pokemonList.value) { pokemon ->
-                PokemonItem(pokemon)
+                PokemonItem(pokemon, onPokemonClick)
             }
         }
     }
 }
 
 @Composable
-fun PokemonItem(pokemon: Pokemon) {
+fun PokemonItem(pokemon: Pokemon, onPokemonClick: (String) -> Unit) {
     val pokemonId = pokemon.url.split("/").filter { it.isNotEmpty() }.last()
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .clickable { onPokemonClick(pokemonId) } // Hacer clic en un Pokémon
     ) {
         Image(
             painter = rememberAsyncImagePainter(
-                model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+                model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$pokemonId.png"
             ),
-            contentDescription = "Bulbasaur",
+            contentDescription = pokemon.name,
             modifier = Modifier.size(64.dp),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = pokemon.name.capitalize())
-
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
 fun PokemonListScreenPreview() {
-    PokemonListScreen()
+    PokemonListScreen {}
 }
-
-
