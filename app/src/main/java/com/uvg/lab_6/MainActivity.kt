@@ -20,6 +20,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            PokemonListScreen()
+        }
+    }
+}
 // Modelo para el Pokémon (simplificado)
 data class Pokemon(val name: String, val url: String)
 
@@ -57,7 +65,10 @@ fun PokemonListScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pokémon List") }
+                title = { Text("Pokémon List") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             )
         }
     ) { padding ->
@@ -76,6 +87,8 @@ fun PokemonListScreen() {
 
 @Composable
 fun PokemonItem(pokemon: Pokemon) {
+    val pokemonId = pokemon.url.split("/").filter { it.isNotEmpty() }.last()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,16 +96,19 @@ fun PokemonItem(pokemon: Pokemon) {
     ) {
         Image(
             painter = rememberAsyncImagePainter(
-                model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.url.split("/").filter { it.isNotEmpty() }.last()}.png"
+                model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
             ),
-            contentDescription = pokemon.name,
+            contentDescription = "Bulbasaur",
             modifier = Modifier.size(64.dp),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = pokemon.name)
+        Text(text = pokemon.name.capitalize())
+
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
@@ -100,11 +116,4 @@ fun PokemonListScreenPreview() {
     PokemonListScreen()
 }
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            PokemonListScreen()
-        }
-    }
-}
+
